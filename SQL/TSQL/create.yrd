@@ -1,0 +1,117 @@
+﻿[<AllPublic>]
+module Create_proc
+
+open MsCommon, Common, Stmnt, Set_stmnt, Select_crud
+
+create_proc:
+    'CREATE' ('PROCEDURE' | 'PROC')
+    [ident '.'] ident [';' DEC_NUMBER]
+    brace_opt<'(' comma_list<proc_formal_param> ')'>
+    ['WITH' (execute_as)+]
+    ['FOR' 'REPLICATION']
+    'AS' (proc_body_stmnt ';'?)*
+    ';'?
+	
+create_stmnt:
+	'CREATE' 
+		| 'SERVICE' ident
+		   [ 'AUTHORIZATION' ident ]
+		   'ON' 'QUEUE' [ ident. ]ident
+		   [ '(' ident | 'DEFAULT'? ')' ]
+		| 'MASTER' 'KEY' 'ENCRYPTION' 'BY' password
+		| 'APPLICATION' 'ROLE' ident 
+			'WITH' password [ COMMA 'DEFAULT_SCHEMA' '=' ident ]
+		| 'ASSEMBLY' ident
+			[ 'AUTHORIZATION' ident ]
+			FROM ( comma_list<client_assembly_specifier | assembly_bits> )
+			[ 'WITH' 'PERMISSION_SET' '=' ( 'SAFE' | 'EXTERNAL_ACCESS' | 'UNSAFE' ) ]
+		| 'AGGREGATE' full_ident
+			'(' ident input_sqltype ')'
+			'RETURNS' return_sqltype
+			'EXTERNAL' 'NAME' full_ident
+		| 'ASYMMETRIC' 'KEY' ident 
+			[ 'AUTHORIZATION' ident ]
+			(
+			  'FROM' Asym_Key_Source
+			  | 'WITH' 'ALGORITHM' '=' ( RSA_512 | RSA_1024 | RSA_2048 )
+			)
+			[ 'ENCRYPTION' 'BY' password ]
+		| 'CREDENTIAL' ident 'WITH' 'IDENTITY' '=' STRING_CONST
+			[ COMMA 'SECRET' '=' STRING_CONST ]
+		| 'DEFAULT' full_ident 
+			'AS' sql_expr
+		| 'ROLE' ident [ 'AUTHORIZATION' ident ]
+		| 'CONTRACT' ident
+		   [ 'AUTHORIZATION' ident ]
+			  '('  comma_list<(   ( STRING_CONST | [ 'DEFAULT' ] )
+				  'SENT' 'BY' ( 'INITIATOR' | 'TARGET' | 'ANY' ) 
+			   )> ')' 
+		| 'CERTIFICATE' ident [ 'AUTHORIZATION' ident ] 
+			( 'FROM' existing_keys | generate_new_keys )
+			[ 'ACTIVE' 'FOR' 'BEGIN_DIALOG' '='  ( 'ON' | 'OFF' ) ]
+		| 'EVENT' 'NOTIFICATION' ident 
+			'ON' ( 'SERVER' | 'DATABASE' | 'QUEUE' ident ) 
+			[ 'WITH' 'FAN_IN' ]
+			'FOR' comma_list< ( event_type | event_group } [ ,...n ] ???????????????????
+			'TO' 'SERVICE' STRING_CONST COMMA STRING_CONST
+		| 'FULLTEXT' 'CATALOG' ident
+			[ 'ON' 'FILEGROUP' ident ]
+		    [ 'IN' 'PATH' STRING_CONST]
+			[ 'WITH' catalog_option]
+			[ 'AS' 'DEFAULT']
+			[ 'AUTHORIZATION' ident ]
+		| CREATE FULLTEXT INDEX ON table_name
+			[ '(' comma_list<ident [ 'TYPE' 'COLUMN' ident ] 
+				[ 'LANGUAGE' language_term]> ')' ]                    ???????????????????
+			'KEY' 'INDEX' ident
+				[ 'ON' ident ]
+			[ 'WITH' 
+				( 'CHANGE_TRACKING' ( 'MANUAL' | 'AUTO' | 'OFF' [ COMMA 'NO' 'POPULATION' ] ) )
+			]
+
+catalog_option:
+    'ACCENT_SENSITIVITY' '=' ( 'ON' | 'OFF' }
+	[ ; ]
+		
+existing_keys: 
+    'ASSEMBLY' ident
+    | ( 
+        [ 'EXECUTABLE' ] 'FILE' '=' STRING_CONST
+        [ 'WITH' 'PRIVATE' 'KEY' '(' private_key_options ')' ] 
+      )
+        
+generate_new_keys: 
+    [ 'ENCRYPTION' 'BY' password ] 
+    'WITH' 'SUBJECT' '=' STRING_CONST 
+    [ (COMMA date_options )* ] 
+
+private_key_options:
+    'FILE' '=' STRING_CONST
+    [ COMMA 'DECRYPTION' 'BY' password ]
+    [ , 'ENCRYPTION' 'BY' 'password' ]  
+
+date_options:
+    'START_DATE' '=' STRING_CONST (*data_const*) | 'EXPIRY_DATE' '=' STRING_CONST
+
+password:
+	'PASSWORD' '=' STRING_CONST
+	
+(*??????????????????????????????*)
+client_assembly_specifier:
+	'[\\computer_name\]share_name\[path\]manifest_file_name'
+	| '[local_path\]manifest_file_name'	
+
+assembly_bits:
+{ varbinary_literal | varbinary_expression }
+
+input_sqltype:
+	system_scalar_type | { [ udt_schema_name. ] udt_type_name }
+
+return_sqltype:
+	system_scalar_type | { [ udt_schema_name. ] udt_type_name }
+
+Asym_Key_Source:
+	FILE = 'path_to_strong-name_file'
+	| EXECUTABLE FILE = 'path_to_executable_file'
+	| ASSEMBLY Assembly_Name
+

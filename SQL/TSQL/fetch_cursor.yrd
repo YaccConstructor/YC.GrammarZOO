@@ -1,0 +1,15 @@
+﻿[<AllPublic>]
+module Update
+
+open Expr, MsCommon, Common, Common_select_delete_insert_update
+ 
+fetch_cursor:
+	'FETCH' 
+			   [ 'NEXT' | 'PRIOR' | 'FIRST' | 'LAST' 
+						| 'ABSOLUTE' ( dec_num | ident ) 
+						| 'RELATIVE' ( dec_num | ident ) 
+				   ] 
+				   'FROM' 
+			  ] 
+	( ( 'GLOBAL'? ident ) | ident ) 
+	[ 'INTO' comma_list<ident> ] 

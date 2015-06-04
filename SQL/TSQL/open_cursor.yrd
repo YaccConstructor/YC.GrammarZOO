@@ -1,0 +1,8 @@
+﻿[<AllPublic>]
+module Update
+
+open Expr, MsCommon, Common, Common_select_delete_insert_update
+ 
+open_cursor:
+	'OPEN' ( ( 'GLOBAL'? ident ) | ident )
+	';'?

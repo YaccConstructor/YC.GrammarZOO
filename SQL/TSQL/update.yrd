@@ -1,0 +1,26 @@
+﻿[<AllPublic>]
+module Update
+
+open Expr, MsCommon, Common, Common_select_delete_insert_update
+update_stmnt:
+	['WITH' comma_list<common_table_expression>]
+	'UPDATE'
+		[ 'TOP' '('sql_expr')' 'PERCENT'? ]	
+		(
+			table_source
+		)
+		comma_list<set_stmnt>
+		[ 'OUTPUT' clause ]
+		[ from ] 
+		[
+			'WHERE' 
+				search_condition
+				| ( [ 'CURRENT' 'OF' 
+					  ( 
+						( [ 'GLOBAL' ] ident ) | ident 
+					  ) 
+					]
+				  )
+		]	 
+		['OPTION' '(' comma_list<query_hint> ')'] 
+	';'? 

@@ -1,0 +1,14 @@
+﻿[<AllPublic>]
+module Update
+
+open Expr, MsCommon, Common, Common_select_delete_insert_update
+(*Transact-SQL Extended Syntax*)
+declare_cursor_stmnt2:
+	'DECLARE' ident 'CURSOR' [ 'LOCAL' | 'GLOBAL' ] 
+		 [ 'FORWARD_ONLY' | 'SCROLL' ] 
+		 [ 'STATIC' | 'KEYSET' | 'DYNAMIC' | 'FAST_FORWARD' ] 
+		 [ 'READ_ONLY' | 'SCROLL_LOCKS' | 'OPTIMISTIC' ] 
+		 [ 'TYPE_WARNING' ] 
+		 'FOR' select_stmnt 
+		 [ 'FOR' 'UPDATE' [ 'OF' comma_list<ident> ] ]
+	';'? 

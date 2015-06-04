@@ -1,0 +1,9 @@
+﻿[<AllPublic>]
+module DropTable
+
+open MsCommon, Common_select_delete_insert_update
+
+drop_table:
+	'DROP' 'TABLE' [ ident . [ ident ] . | ident . ]
+        comma_list<table_source> 
+	';'?

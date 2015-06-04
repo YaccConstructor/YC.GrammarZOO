@@ -1,0 +1,15 @@
+﻿[<AllPublic>]
+module Delete
+
+open Expr, MsCommon, Common, Common_select_delete_insert_update
+
+delete_stmnt:
+	['WITH' comma_list<common_table_expression>]
+	'DELETE'
+		[ 'TOP' '('sql_expr')' 'PERCENT'? ]	
+		from? | table_source
+		[ 'OUTPUT' clause ]
+		[ from ] 
+		[ 'WHERE' search_condition ]	 
+		['OPTION' '(' comma_list<query_hint> ')'] 
+	';'? 

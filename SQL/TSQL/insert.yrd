@@ -1,0 +1,22 @@
+﻿[<AllPublic>]
+module Insert
+
+open Expr, MsCommon, Common, Execute_stmnt, Common_select_delete_insert_update
+
+insert_stmnt:  
+    ['WITH' comma_list<common_table_expression>]
+    'INSERT'
+	['TOP' '(' sql_expr ')' ['PERCENT']]
+	'INTO'?
+	table_source
+	(
+		[comma_list<ident>]
+		[ 'OUTPUT' clause ]  (*проверить utput clause по документации*)
+		(
+			'VALUES' '(' comma_list<'DEFAULT' | 'NULL' | sql_expr> ')'
+			| table_source
+			| execute_stmnt
+		)
+	)
+	| 'DEFAULT' 'VALUES'
+	';'?
