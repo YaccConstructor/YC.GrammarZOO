@@ -29,7 +29,7 @@ open YC.FST.AbstractLexing.Interpreter
 open AbstractAnalysis.Common
 open Yard.Examples.MSParser
 open System
-open LexerHelper
+//open LexerHelper
 open Microsoft.FSharp.Reflection
 open Yard.Utils.StructClass
 open YC.SDK.CommonInterfaces
@@ -78,6 +78,8 @@ rule tokens = parse
  | "select" { L_select(gr) |> Some }
  | "join" { L_join(gr) |> Some }
  | "update" { L_update(gr) |> Some }
+ | "insert" { L_insert(gr) |> Some }
+ | "values" { L_values(gr) |> Some }
  | "from" { L_from(gr)|> Some }
  | "where" { L_where(gr)|> Some }
  | "and" { L_and(gr) |> Some }
