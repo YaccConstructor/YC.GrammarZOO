@@ -87,7 +87,9 @@ rule tokens = parse
  | "set" { L_set(gr) |> Some }
  | "on" { L_on(gr) |> Some }
  | "go" { L_go(gr) |> Some }
+ | "into" { L_into(gr) |> Some }
  | ident { IDENT(gr) |> Some }
+
 //| "--" [^'\r' '\n']*  { None (* parser knows nothing about comments *) }  
  (*| "/*" { commendepth := 1; clearBuf(); multiline_comment brs }*)
  (* and literal = parse
