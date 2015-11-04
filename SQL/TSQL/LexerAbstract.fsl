@@ -27,7 +27,7 @@ open YC.FST.GraphBasedFst
 open YC.FSA.GraphBasedFsa
 open YC.FST.AbstractLexing.Interpreter
 open AbstractAnalysis.Common
-open Yard.Examples.MSParser
+open Yard.Examples.MSParserAbstract
 open System
 //open LexerHelper
 open Microsoft.FSharp.Reflection
