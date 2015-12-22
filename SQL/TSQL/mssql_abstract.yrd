@@ -22,8 +22,8 @@
 
 {
 open Yard.Utils.SourceText
-open YC.FSA.GraphBasedFsa
-open YC.FSA.FsaApproximation
+open QuickGraph.FSA.GraphBasedFsa
+open QuickGraph.FSA.FsaApproximation
 }
 
 include "../Common/Common.yrd"
