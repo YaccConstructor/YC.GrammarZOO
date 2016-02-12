@@ -3,41 +3,81 @@ module Expr
 
 open Datatype, MsCommon, Select_crud, Cycles_stmnt, Select_crud
 
+
+sql_expr: 
+   sql_assigment
+  | sql_assigment '|' '|' sql_expr
+
+sql_assigment:
+  sql_expr_not_concat
+  | (GLOBALVAR | LOCALVAR) ('='| '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '^=' | '|=') sql_expr  
+
+
 sql_expr_not_concat:
+    sql_expr_with_and   
+  | '*'  
+  | sql_expr 'COLLATE' ident
+  | sql_expr_with_and 'OR' sql_expr_not_concat
+
+ 
+sql_expr_with_and:
+  sql_not_expr
+  | sql_not_expr 'AND' sql_expr_not_concat
+
+sql_not_expr:
+  sql_bool
+  | 'NOT' sql_bool
+
+sql_bool:
+   sql_equals 'NOT'? 'IN' '(' comma_list<sql_expr> ')'
+  | sql_equals 'NOT'? 'LIKE' sql_expr_not_concat
+  | sql_equals 'IS' 'NOT'? 'NULL'
+  | sql_equals
+
+
+sql_equals:
+  low_binop
+  | low_binop ('=' | '>' | '<' | ('>' '=') | ('<' '=') | ('<' '>') | 
+  ('!' '=') | ('!' '>') | ('!' '<')) sql_not_expr
+
+low_binop:
+  high_binop ('+' | '-' | '|' | '^' | '&') sql_not_expr
+  | high_binop
+
+
+high_binop:
+  unar_op ('*' | '/' | '%') sql_not_expr
+  | unar_op
+
+
+unar_op:
+  primary
+  | ('~' | '-' | '+') primary  
+
+primary:
     sql_value
-  | scalar_function
-  | '(' sql_expr ')'
-  | call_expr
   | full_ident
-  | select_stmnt
-  | ('NOT' | '+=' | '-=' | '~') sql_expr
+  | call_expr
   | GLOBALVAR
   | LOCALVAR
-  | '*'
-  | sql_expr binop sql_expr
-  | sql_expr 'IS'? 'NOT'? 'NULL'
+  | '(' sql_expr_not_concat ')'  
+  | select_stmnt
   | ranking_windowed_function 
   | aggregate_windowed_function
-  | sql_expr 'COLLATE' ident
   | case
-  | 'EXISTS' sql_expr
-  | 'IS_MEMBER' '(' STRING_CONST ')'
-  | sql_expr ('AND' | 'OR') sql_expr
-  | 'TYPE' 'FROM' full_ident
   | fetch_stmnt
-  | sql_expr 'NOT'? 'IN' '(' comma_list<sql_expr> ')'
-  | sql_expr 'NOT'? 'LIKE' sql_expr
+  | 'EXISTS' sql_expr_not_concat
+  | 'IS_MEMBER' '(' STRING_CONST ')'
+  | scalar_function 
+  | 'TYPE' 'FROM' full_ident
   
-sql_expr: 
-   sql_expr_not_concat 
-  | sql_expr_not_concat '|' '|' sql_expr
 
 scalar_function:
       'LOWER' sql_expr
     | 'SUM' '(' ['ALL' | 'DISTINCT'] sql_expr ')'
-	| ( 'UNISTR'|'TRUNC'|'EXTRACT') '(' sql_expr ')'
-	| ('HOUR'|'MINUTE'|'SECOND') 'FROM' sql_expr
-	| 'HEXTORAW' '(' sql_value ')'
+  | ( 'UNISTR'|'TRUNC'|'EXTRACT') '(' sql_expr ')'
+  | ('HOUR'|'MINUTE'|'SECOND') 'FROM' sql_expr
+  | 'HEXTORAW' '(' sql_value ')'
 
 call_expr: 
      full_ident '(' comma_list<(sql_datatype|sql_expr)> ')'
@@ -58,9 +98,7 @@ order_by_clause:
     ['ORDER' 'BY' comma_list<(sql_expr ['ASC' | 'DESC'])>]
 
 binop:
-      '+=' | '-=' | '*=' | '/=' | '%=' | '&=' | '^=' | '|='
-    | '=' | '+' | '-' | '*' | '/' | '%' | '~'
-    | '<' | '>' | ('<' '>') | ('<' '=') | ('>' '=') 
+    '=' | '<' | '>' | ('<' '>') | ('<' '=') | ('>' '=') | ('!' '=') | ('!' '<') | ('!' '>')
 
 fetch_stmnt:    
     'FETCH' 
@@ -76,4 +114,4 @@ fetch_stmnt:
       'FROM' 
     ] 
     ('GLOBAL'? IDENT | LOCALVAR) 
-    ('INTO' comma_list<LOCALVAR>)? 
+    ('INTO' comma_list<LOCALVAR>)?
