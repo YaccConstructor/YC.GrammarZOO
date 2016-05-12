@@ -23,7 +23,7 @@
 {
 open Yard.Utils.SourceText
 open QuickGraph.FSA.GraphBasedFsa
-open QuickGraph.FSA.FsaApproximation
+open Yard.Utils.StructClass
 }
 
 include "../Common/Common.yrd"
