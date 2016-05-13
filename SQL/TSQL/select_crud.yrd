@@ -99,26 +99,31 @@ select_list:
     )>
         
 search_condition: 
-    (
-        'NOT'? predicate
-      | '(' search_condition ')'
-    )
-    (
-      ('AND' | 'OR')
-      'NOT'? (predicate | '(' search_condition ')')
-    )*
+      sc_with_and
+  | sc_with_and 'OR' search_condition 
+  | '(' search_condition ')'
+
+sc_with_and:
+    sc_prim
+  | sc_prim 'AND' search_condition
+
+sc_prim:
+    predicate
+  | 'NOT' predicate
     
 predicate: 
-      sql_expr ['ESCAPE' STRING_CONST]
-    | sql_expr 'NOT'? 'BETWEEN' sql_expr 'AND' sql_expr 
-    | sql_expr 'IS' 'NOT'? 'NULL'  
-    | sql_expr binop ('ALL' | 'SOME' | 'ANY')
+      sql_expr_not_concat ['ESCAPE' STRING_CONST]
+    | sql_expr_not_concat 'NOT'? 'BETWEEN' sql_expr_not_concat 'AND' sql_expr_not_concat 
+    | sql_expr_not_concat 'IS' 'NOT'? 'NULL'  
+    | sql_expr_not_concat binop ('ALL' | 'SOME' | 'ANY')
       '(' query_expression ')'            
     | 'EXISTS' '(' query_expression ')'  
     | IDENT ['.' IDENT] ['(' ')'] 'IN'
       '('
         (dec_num | STRING_CONST) ',' (dec_num | STRING_CONST)
       ')'
+
+
 
 from:
     'FROM' not_empty_list<table_source ','>
