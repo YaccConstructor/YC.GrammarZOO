@@ -21,8 +21,13 @@
 
 
 {
+<<<<<<< HEAD
 open Yard.Utils.SourceText                   
+=======
+open Yard.Utils.SourceText
+open QuickGraph.FSA.GraphBasedFsa
 open Yard.Utils.StructClass
+>>>>>>> 3c54bd565f54df0cb91765018804f9bb7406260a
 }
 
 include "../Common/Common.yrd"
