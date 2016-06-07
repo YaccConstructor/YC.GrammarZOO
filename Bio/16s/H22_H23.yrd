@@ -1,0 +1,46 @@
+(*
+Variation in secondary structure of the 16S rRNA molecule in cyanobacteria
+with implications for phylogenetic analysis
+*)
+
+
+(*include "../common/common.yrd"
+
+module Main
+
+open Common
+*)
+
+stem<s>: 
+      A stem<s> U
+    | U stem<s> A
+    | C stem<s> G
+    | G stem<s> C
+    | G stem<s> U
+    | U stem<s> G
+    | G stem<s> A
+    | A stem<s> G
+    | s
+
+any: A | U | G | C
+
+[<Start>]
+full: folded any?
+
+folded: h22
+
+h23: stem<(any_1_3 s1 any_1_3)>
+s1: stem<(any*[1..4] s2 any*[2..7])>
+s2: stem<any*[4..8]>
+
+h23_r: 
+  G 
+  any_1_3 stem<(G A A G)>
+  G
+
+h22: stem<(s4 any)>
+
+s4: stem<(any_1_3 s5 any_1_3)>
+s5: stem<(h23 any*[3..7] h23_r)>
+
+any_1_3: any*[1..3]
