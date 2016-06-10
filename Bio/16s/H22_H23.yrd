@@ -40,13 +40,13 @@ any: A | U | G | C
 [<Start>]
 full: folded any?
 
-folded: h22
+folded: root
 
 h23: stem<(any_1_3 s1 any_1_3)>
 s1: stem<(any*[1..4] s2 any*[2..7])>
 s2: stem<any*[4..8]>
 
-h24: gstem<(any_1_3 stem<(G A A G)>)>
+h24: gstem<(any_1_3 stem<(any? G A A G any?)>)>
 
 h22: stem<(s4 any)>
 
@@ -55,3 +55,15 @@ s5: stem<(h23 any*[3..7] h24)>
 
 any_1_3: any*[1..3]
 any_2_3: any*[2..3]
+any_2_4: any*[2..4]
+any_3_4: any*[3..4]
+
+stem_e1<s> : stem<(any? stem<s> any?)>
+stem_e2<s> : stem<(any? stem_e1<s> any?)>
+
+h21: stem<(any? s6 any?)>
+s6: stem<(any_2_3 s7 any_3_4)>
+s7: stem<(any*[2..6] s8 any_2_4)>
+s8: stem_e2<any*[4..5]>
+
+root: stem<(any_3_4 stem<(any*[1..2] h21 any_2_4 h22 any_2_4)> any_3_4)>
