@@ -95,16 +95,18 @@ h7: stem_e2<(any_2_4 stem<(any_1_2 h8 any_4_6 h9 any_3_5 h10 any_1_2)> any_1_3)>
 h11: stem_e1<(any? stem_e2<any_6_8> any_3_5)>
 h12: stem<(any? stem<any_3_5> any_2_4)>
 h13: stem<any_9_11>
-h14: stem<any_3_5>
+(*h14: stem<any_3_5>*)
+h14: stem<(U A C G)>
 h5: any_5_7 stem<(any_1_3 h6 any_5_7 stem<(any_5_7 h7 any? h11 any_1_3 h12 any?)> any_1_2 h13 any_1_2 h14 any_2_4)> any_3_5
 
 h15: stem_e1<(any_2_4 stem<any_3_5> any?)>
 h16: stem<(any_5_7 stem<any_3_5> any_4_6)>
 h17: stem_e2<(any_2_4 stem<any_6_8> any_3_5)>
-h18: stem<(any_5_7 stem<(any_4_6 stem<any_4_6> any_6_8)>)>
+(*h18: stem<(any_5_7 stem<(any_4_6 stem<any_4_6> any_6_8)>)>*)
+h18: stem<(any_5_7 stem<(any_4_6 stem<(any G C C)> any_2_3 A A any_1_2 )>)>
 
 h4: stem_e1<(h5 h15 any?)>
 h3: stem_e1<(any? h4 any_1_3 h16 any? h17 any_2_4 h18)>
 
-root2: h3 any_9_11 h19 any_1_2 h27 
+root2: h3 (*any_9_11 h19 any_1_2 h27 *)
 
