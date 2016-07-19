@@ -21,8 +21,8 @@
 
 
 {
-open Yard.Utils.SourceText                   
-open Yard.Utils.StructClass
+//open Yard.Utils.SourceText                   
+//open Yard.Utils.StructClass
 open QuickGraph.FSA.GraphBasedFsa
 
 }
