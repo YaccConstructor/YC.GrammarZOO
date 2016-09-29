@@ -123,6 +123,7 @@ h35: stem<(h36 any_2_3 h37 any_2_3)>
 h39: stem<(any_2_4 stem<(any_1_3 stem<any_4_6>)> any_2_4)>
 h40: stem<any_4>
 h38: stem<(any_1_2 h39 any_1_3 h40 any_4_6)>
+(*h38: stem<(any_1_2 h39 any_1_3 h40 (A A G G any))>*)
 h34: stem_e1<(any_1_2 stem<(stem_e2<(any_2_4 h35 any_4_6 h38 any_3_5)> any_2_4)>)>
 h33: stem<(any_1_3 stem<any_4> any_1_3 stem<any_4> any_1_3)>
 h32: stem<(any_4_6 h33 any_1_2 h34 any_3_5)>
