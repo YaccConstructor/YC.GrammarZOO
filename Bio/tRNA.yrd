@@ -5,6 +5,8 @@ stem<s>:
     | G stem<s> C
     | G stem<s> U
     | U stem<s> G
+    | G stem<s> A
+    | A stem<s> G
     | s
 
 any: A | U | G | C
