@@ -1,0 +1,194 @@
+{
+open Brahma.FSharp.OpenCL.AST
+}
+
+tokens {
+    _ of string
+}
+
+options {
+    translate = true
+    module = "OpenCLTranslator.Parser"
+    infEpsPath = epsilons
+    pos = uint64
+}
+
+module Main
+
+[<Start>]
+program: (* FunDecl list *)
+    function_definition+
+
+function_definition: (* FunDecl *)
+    declSpecs=declaration_specifier_list clAndIdent=declarator '(' pars=parameter_list ')' ';' {
+        let (cl, ident) = clAndIdent
+        match cl with
+        | None -> FunDecl<Lang>(declSpecs, ident, pars, StatementBlock<_>(new ResizeArray<_>()))
+        | Some cl ->
+            match declSpecs.Type with
+            | Some oldType ->
+                declSpecs.Type <- Some <| cl oldType
+                FunDecl<Lang>(declSpecs, ident, pars, StatementBlock<_>(new ResizeArray<_>()))
+            | None -> failwithf "Fatal: no type definition found for %s" ident
+    }
+
+(* Declaration specifiers *)
+
+declaration_specifier_list: (* DeclSpecifierPack *)
+    specs=declaration_specifier+ {
+        let declPack = new DeclSpecifierPack<_>()
+        List.iter (fun f -> f declPack) specs
+        declPack.TypeQuals <- List.sort declPack.TypeQuals
+        declPack
+    }
+
+declaration_specifier: (* DeclSpecifierPack -> void *)
+    x=function_qualifier {
+        fun (declPack:DeclSpecifierPack<_>) ->
+            match declPack.FunQual with
+            | None -> declPack.FunQual <- Some x
+            | Some _ -> failwith "A declaration can't have more than one function qualifier"
+    }
+    | x=address_space_qualifier {
+        fun (declPack:DeclSpecifierPack<_>) ->
+            match declPack.AddressSpaceQual with
+            | AddressSpaceQualifier.Default -> declPack.AddressSpaceQual <- x
+            | _ -> failwith "A declaration can't have more than one address space qualifier"
+    }
+    | x=access_qualifier {
+        fun (declPack:DeclSpecifierPack<_>) ->
+            match declPack.AccessQual with
+            | None -> declPack.AccessQual <- Some x
+            | Some _ -> failwith "A declaration can't have more than one access qualifier"
+    }
+    | x=storage_class_specifier {
+        fun (declPack:DeclSpecifierPack<_>) ->
+            match declPack.StorageClassSpec with
+            | None -> declPack.StorageClassSpec <- Some x
+            | Some _ -> failwith "A declaration can't have more than one storage class specifier"
+    }
+    | x=type_specifier {
+        fun (declPack:DeclSpecifierPack<_>) ->
+            match declPack.Type with
+            | None -> declPack.Type <- Some x
+            | Some _ -> failwith "A declaration can't have more than one type specifier"
+    }
+    | x=type_qualifier { fun (declPack:DeclSpecifierPack<_>) -> declPack.AddTypeQual x }
+
+function_qualifier: (* FunQualifier *)
+    KERNEL { Kernel }
+
+address_space_qualifier: (* AddressSpaceQualifier *)
+    GLOBAL { Global }
+    | LOCAL { Local }
+    | CONSTANT { Constant }
+    | PRIVATE { Private }
+
+access_qualifier: (* AccessQualifier *)
+    READ_ONLY { ReadOnly }
+    | WRITE_ONLY { WriteOnly }
+    | READ_WRITE { ReadWrite }
+
+storage_class_specifier: (* StorageClassSpecifier *)
+    TYPEDEF { failwith "Fatal: typedef not supported yet!" }
+    | EXTERN { Extern }
+    | STATIC { Static }
+
+type_specifier: (* Type *)
+    t=primitive_type_specifier { t :> Type<_> }
+    | s=struct_or_union_specifier { StructType<_>(Some s) :> Type<_> }
+
+primitive_type_specifier: (* PrimitiveType *)
+    BOOL { PrimitiveType<_>(Bool) }
+    | CHAR { PrimitiveType<_>(Char) } | SHORT { PrimitiveType<_>(Short) }
+    | INT { PrimitiveType<_>(Int) } | LONG { PrimitiveType<_>(Long) }
+    | UCHAR { PrimitiveType<_>(UChar) } | USHORT { PrimitiveType<_>(UShort) }
+    | UINT { PrimitiveType<_>(UInt) } | ULONG { PrimitiveType<_>(ULong) }
+    | FLOAT { PrimitiveType<_>(Float) } | DOUBLE { PrimitiveType<_>(Double) } | HALF { PrimitiveType<_>(Half) }
+    | SIGNED t=primitive_type_specifier {
+        match t with
+        | t when (t :? PrimitiveType<_>) ->
+            match (t :?> PrimitiveType<_>).Type with
+            | Char | Short | Int | Long -> t
+            | _ -> t.ToString().ToLower() |> failwithf "Fatal: could not parse \'signed %s\'"
+        | _ -> failwith "Fatal: only char, short, int, long can be declared as signed"
+    }
+    | UNSIGNED t=primitive_type_specifier {
+        match t with
+        | t when (t :? PrimitiveType<_>) ->
+            match (t :?> PrimitiveType<_>).Type with
+            | Char -> PrimitiveType<_>(UChar)
+            | Short -> PrimitiveType<_>(UShort)
+            | Int -> PrimitiveType<_>(UInt)
+            | Long -> PrimitiveType<_>(ULong)
+            | _ -> t.ToString().ToLower() |> failwithf "Fatal: could not parse \'unsigned %s\'"
+        | _ -> failwith "Fatal: only char, short, int, long can be declared as signed"
+    }
+    | VOID { PrimitiveType<_>(Void) }
+    | t=TYPE_NAME { PrimitiveType<_>(TypeName t) }
+
+type_qualifier: (* TypeQualifier *)
+    CONST { TypeQualifier.Const }
+    | RESTRICT { TypeQualifier.Restrict }
+    | VOLATILE { TypeQualifier.Volatile }
+
+(* Declarator *)
+
+declarator: (* ((Type -> Type) option, string) *)
+    pcl=pointer? dclAndIdent=direct_declarator {
+        let (dcl, ident) = dclAndIdent
+        match pcl, dcl with
+        | None,     None     -> None, ident
+        | Some pcl, None     -> Some pcl, ident
+        | None,     Some dcl -> Some dcl, ident
+        | Some pcl, Some dcl -> Some (pcl >> dcl), ident
+    }
+
+direct_declarator: (* ((Type -> Type) option, string) *)
+    ident=IDENTIFIER { None, ident }
+    | clAndIdent=direct_declarator '[' ']' {
+        let (cl, ident) = clAndIdent
+        match cl with
+        | None -> Some (fun t -> ArrayType<_>(t) :> Type<_>), ident
+        | Some cl -> Some (fun t -> ArrayType<_>(cl t) :> Type<_>), ident
+    }
+    (* Pointers to functions are not allowed: OpenCL 2.0, section 6.9.a. *)
+
+pointer: (* Type -> Type *)
+    '*' qs=type_qualifier* cl=pointer? {
+        match cl with
+        | None -> fun t -> new RefType<_>(t, List.sort qs) :> Type<_>
+        | Some cl -> fun t -> new RefType<_>(cl t, List.sort qs) :> Type<_>
+    }
+
+(* Parameters *)
+
+parameter_list: (* FunFormalArg list *)
+    { [] } | not_empty_comma_list<parameter_declaration>
+
+parameter_declaration: (* FunFormalArg *)
+    {declSpecs:DeclSpecifierPack<_>}=declaration_specifier_list clAndIdent=declarator {
+        let (cl, ident) = clAndIdent
+        match cl with
+        | None -> FunFormalArg<_>(declSpecs, ident)
+        | Some cl ->
+            match declSpecs.Type with
+            | Some oldType ->
+                declSpecs.Type <- Some <| cl oldType
+                FunFormalArg<_>(declSpecs, ident)
+            | None -> failwithf "Fatal: no type definition found for %s" ident
+    }
+
+(* Struct-or-union specifier (used in type_specifier) *)
+
+struct_or_union_specifier: (* Struct *)
+    struct_or_union n=IDENTIFIER { Struct<_>(n, []) }
+
+struct_or_union: (* unit *)
+    STRUCT
+    (* | UNION *)
+
+(* Common *)
+
+not_empty_comma_list<item>: (* item list *)
+    h=item t=(',' item)* { h :: [for (_, it) in t -> it] }

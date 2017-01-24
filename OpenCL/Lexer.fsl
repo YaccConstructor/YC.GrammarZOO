@@ -1,0 +1,73 @@
+{
+module OpenCLTranslator.Lexer
+open Microsoft.FSharp.Text.Lexing
+open OpenCLTranslator.Parser
+
+let lexeme lexbuf = LexBuffer<_>.LexemeString(lexbuf)
+}
+
+let digit = ['0'-'9']
+let whitespace = [' ' '\t' '\r' '\n']
+let chars = ['a'-'z'] | ['A'-'Z']
+let underscore = '_'
+let specialChars = [',' ';' '*' '(' ')' '[' ']']
+
+rule token = parse
+| whitespace { token lexbuf }
+
+| specialChars {
+    let ch = lexeme lexbuf
+    match genLiteral ch ch with
+    | Some t -> t
+    | None -> failwith "Failed to gen a literal"
+}
+
+| "__kernel" | "kernel" { KERNEL(lexeme lexbuf) }
+
+| "__global" | "global" { GLOBAL(lexeme lexbuf) }
+| "__local" | "local" { LOCAL(lexeme lexbuf) }
+| "__constant" | "constant" { CONSTANT(lexeme lexbuf) }
+| "__private" | "private" { PRIVATE(lexeme lexbuf) }
+
+| "__read_only" | "read_only" { READ_ONLY(lexeme lexbuf) }
+| "__write_only" | "write_only" { WRITE_ONLY(lexeme lexbuf) }
+| "__read_write" | "read_write" { READ_WRITE(lexeme lexbuf) }
+
+| "typedef" { TYPEDEF(lexeme lexbuf) }
+| "extern" { EXTERN(lexeme lexbuf) }
+| "static" { STATIC(lexeme lexbuf) }
+
+| "bool" { BOOL(lexeme lexbuf) }
+| "char" { CHAR(lexeme lexbuf) }
+| "short" { SHORT(lexeme lexbuf) }
+| "int" { INT(lexeme lexbuf) }
+| "long" { LONG(lexeme lexbuf) }
+| "uchar" { UCHAR(lexeme lexbuf) }
+| "ushort" { USHORT(lexeme lexbuf) }
+| "uint" { UINT(lexeme lexbuf) }
+| "ulong" { ULONG(lexeme lexbuf) }
+| "float" { FLOAT(lexeme lexbuf) }
+| "double" { DOUBLE(lexeme lexbuf) }
+| "half" { HALF(lexeme lexbuf) }
+| "signed" { SIGNED(lexeme lexbuf) }
+| "unsigned" { UNSIGNED(lexeme lexbuf) }
+| "void" { VOID(lexeme lexbuf) }
+
+| "const" { CONST(lexeme lexbuf) }
+| "restrict" { RESTRICT(lexeme lexbuf) }
+| "volatile" { VOLATILE(lexeme lexbuf) }
+
+| "struct" { STRUCT(lexeme lexbuf) }
+
+| (chars | underscore) (chars | digit | underscore)* { IDENTIFIER(lexeme lexbuf) }
+
+| '{' { skipBody 1 lexbuf }
+
+| eof { RNGLR_EOF ("")}
+| _ {  failwithf "Unexpected input: %s" <| lexeme lexbuf }
+
+and skipBody lBraces = parse
+| '{'           { (skipBody (lBraces + 1) lexbuf) }
+| '}'           { if lBraces = 1 then L_colon_(";") else (skipBody (lBraces - 1) lexbuf) }
+| [^ '{' '}']+  { skipBody lBraces lexbuf }
+| eof           { failwith "Mismatching curly braces" }
