@@ -90,9 +90,6 @@ h27: stem<(any_5_7 stem<any_4> any_3_5)>
 
 h19: stem<(any_5_7 root any_2_4 h25 any*[9..12] h26 any_1_2)> 
 
-
-
-
 h8: stem<(any_3_5 stem<any_4> any_3_5)>
 (*h9: stem<any_3_5>*)
 h9: stem<any_4>
