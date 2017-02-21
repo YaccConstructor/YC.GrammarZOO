@@ -140,6 +140,6 @@ h45: stem<any_4>
 
 head_part_root: h3 any_9_11
 midle_part_root:  h19 (*any_1_2 h27*)
-tail_part_root:   h30 (* any_3_5 h44 any_3_5 h45*)
+tail_part_root:   h30  (*any_3_5 h44  any_3_5 h45*)
 
 full_size_root: h3 any_9_11 h19 any_1_2 h27 any*[7..9] tail_part_root
