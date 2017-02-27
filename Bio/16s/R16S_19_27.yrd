@@ -70,8 +70,8 @@ inline any_4 : any any any any
 
 stem_4: stem<any_4>
 
-stem_e1<s> : stem<(any? stem<s> any?)>
-stem_e2<s> : stem<(any? stem_e1<s> any?)>
+stem_e1<s> : stem<(any stem<s> any | any stem<s> | stem<s> any)>
+stem_e2<s> : stem<(any stem_e1<s> any | any stem_e1<s> | stem_e1<s> any)>
 
 s2: stem<any_5_7>
 s1: stem<(any*[1..4] s2 any*[2..7])>
@@ -94,18 +94,13 @@ s8: stem_e2<any_4_6>
 
 root: stem<(any_3_4 stem<(any_1_2 h21 any_2_4 h22 any_2_4)> any_3_4)>
 
-
-
 h26: stem<(any_1_2 stem<any_4_6> any_3_5 stem_4 any_3_5 )>
 (*h25: stem_e2<(any_2_3 stem<(any? A U U A G A U A C any?)> any_2_3)>*)
-h25: stem_e2<(any_2_3 stem<any*[8..10]> any_2_3)>
+h25: stem<(any*[7..10] stem<any*[8..10]> any_4_6)>
 
-(*root2: stem<(any*[5..7] root any_2_4 h25 any*[9..12] h26 any_1_2)>*)
-
-(*root2: root any_2_4 h25 *)
 h27: stem<(any_5_7 stem_4 any_3_5)>
 
-h19: stem<(any_5_7 root any_2_4 h25 any*[9..12] h26 any_1_2)> 
+h19: stem<(any_5_7 root any_3_5 h25 any*[9..12] h26 any_1_2)> 
 
 h8: stem<(any_3_5 stem_4 any_3_5)>
 (*h9: stem<any_3_5>*)
