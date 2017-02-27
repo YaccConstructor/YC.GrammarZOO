@@ -20,7 +20,14 @@ stem<s>:
     | U stem<s> G
     | G stem<s> A
     | A stem<s> G
-    | s
+    | A s U
+    | U s A
+    | C s G
+    | G s C
+    | G s U
+    | U s G
+    | A s G
+    | G s A
 
 gstem<s>: 
       A stem<s> U
@@ -32,8 +39,15 @@ gstem<s>:
     | G stem<s> A
     | A stem<s> G
     | G stem<s> G
-    | s
-
+    | A s U
+    | U s A
+    | C s G
+    | G s C
+    | G s U
+    | U s G
+    | A s G
+    | G s A
+    | G s G
 
 inline any: A | U | G | C
 
