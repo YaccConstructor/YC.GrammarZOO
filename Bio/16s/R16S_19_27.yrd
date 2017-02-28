@@ -83,8 +83,8 @@ inline any_4 : any any any any
 
 stem_4: stem2g<any_4>
 
-stem_e1<s> : stem2g<(any stem2g<s> | stem2g<s> any)>
-stem_e2<s> : stem<(any stem_e1<s> any | any stem_e1<s> | stem_e1<s> any)>
+stem_e1<s> : stem2g<(any stem2g<s> | stem2g<s> any)> | stem<s>
+stem_e2<s> : stem<(any stem_e1<s> any | any stem_e1<s> | stem_e1<s> any)> | stem_e1<s> | stem<s>
 
 h23: stem<(any_2_4 stem2g<any_5_7> any_5_7)>
 
