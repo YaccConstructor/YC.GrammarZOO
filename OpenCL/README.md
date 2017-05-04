@@ -4,9 +4,10 @@ A basic grammar for OpenCL C 2.0 function definitions. The purpose of this parse
 function definitions from OpenCL C code for further usage in F# code; note that this is not a fully-functional
 translator for checking and/or translating OpenCL C code.
 
-For the moment the following restrictions apply:
+At the moment the following restrictions apply:
 
-* only function definitions are supported as top-level declarations
+* function declarations, preprocessor macros and single-line comments only are allowed at the top level
+* preprocessor macros are ignored and don't have any impact on the parsing process
 * only basic data types are supported (see below in the grammar)
 * unions are not supported
 * anonymous structs as function parameters are not supported
