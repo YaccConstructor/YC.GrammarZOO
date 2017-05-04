@@ -1,7 +1,7 @@
 {
-module OpenCLTranslator.Lexer
+module Brahma.FSharp.OpenCL.OpenCLTranslator.Lexer
 open Microsoft.FSharp.Text.Lexing
-open OpenCLTranslator.Parser
+open Brahma.FSharp.OpenCL.OpenCLTranslator.Parser
 
 let lexeme lexbuf = LexBuffer<_>.LexemeString(lexbuf)
 }
@@ -62,6 +62,9 @@ rule token = parse
 | (chars | underscore) (chars | digit | underscore)* { IDENTIFIER(lexeme lexbuf) }
 
 | '{' { skipBody 1 lexbuf }
+
+| '#' [^ '\n']* '\n' { token lexbuf }
+| "//" [^ '\n']* '\n' { token lexbuf }
 
 | eof { RNGLR_EOF ("")}
 | _ {  failwithf "Unexpected input: %s" <| lexeme lexbuf }
