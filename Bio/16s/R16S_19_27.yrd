@@ -125,15 +125,16 @@ h5: any_5_7 stem_e2<(any_1_3 h6 any_5_7 stem2g<(any_5_7 h7 any? h11 any_1_3 h12 
 (*h5:  stem2g<(any_5_7 h7 any? h11 any_1_3 h12 any?)>*)
 
 h15: stem_e1<(any_2_4 stem2<any_4> any?)>
-h16: stem2<(any_5_7 stem2<any_4> any_4_6)>
-h17: stem_e2<(any_2_4 stem<any_6_8> any_3_5)>
-(*h18: stem<(any_5_7 stem<(any_4_6 stem<any_4> any_6_8)>)>*)
-h18: stem<(any_5_7 stem<(any_4_6 stem2<(any G C any)> any_2_3 A A any_1_2 )>)>
+h16: stem2g<(any_5_7 stem2g<any_2_4> any_4_6)>
+(*h17: stem_e2<(any_2_4 stem<any_6_8> any_3_5)>*)
+h17: stem<(any*[6..9] stem2g<any*[7..11]> any_6_8)>
+h18: stem<(any_5_7 stem<(any_4_6 stem2g<any_3_5> any_6_8)>)>
+(*h18: stem<(any_5_7 stem<(any_4_6 stem2<(any G C any)> any_2_3 A A any_1_2 )>)>*)
 
 (*h18: stem<(any_5_7 stem<(any_4_6 stem<any_4> any_2_3 A A any_1_2 )>)>*)
 
 h4: stem_e1<(h5 h15 any?)>
-h3: stem_e1<(any? h4 any_1_3 h16 any? h17 any_2_4 h18)>
+h3: stem_e2<(any_1_2 h4 any_1_3 h16 any_3_5 (h17|any*[1..6]) any*[2..5] h18 any_1_2)>
 
 h37: stem<any_5_7>
 h36: stem<any_4>
@@ -155,7 +156,7 @@ h28: stem_e2<(any h28_a any_2_4)>
 h44: stem<(any_1_3 stem<(any_2_4 stem<(any_1_3 stem<(any_3_5 stem_e1<(any_1_3 stem<any_4>)> any_2_4)> any_1_3)> any_3_5)> any_2_3)> 
 h45: stem<any_4>
 
-head_part_root: h5
+head_part_root: h3
 midle_part_root:  h19 (*any_1_2 h27*)
 tail_part_root: h28 any_3_5 h44 any_3_5 h45
 
