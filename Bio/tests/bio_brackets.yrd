@@ -1,0 +1,72 @@
+[<Start>]
+s0: a ss1  
+s0: u ss2 
+s0: c ss3 
+s0: g ss4 
+s0: s0 s0
+s0: s0 ms1
+s0: s0 ms2
+s0: s0 ms3
+s0: s0 ms4
+s0: s0 ms5
+s0: s0 ms6
+s0: s0 ms7
+s0: s0 ms8
+s0: s0 ms9
+s0: s0 ms10
+
+ms1: m1 s0
+ms2: m2 s0
+ms3: m3 s0
+ms4: m4 s0
+ms5: m5 s0
+ms6: m6 s0
+ms7: m7 s0
+ms8: m8 s0
+ms9: m9 s0
+ms10: m10 s0
+
+ss1: s u
+ss2: s a
+ss3: s g
+ss4: s c
+
+ss1: s0 u
+ss2: s0 a
+ss3: s0 g
+ss4: s0 c
+
+s: a s1  
+s: u s2 
+s: c s3 
+s: g s4 
+
+s1: m4 u
+s2: m4 a
+s3: m4 g
+s4: m4 c
+
+s1: m5 u
+s2: m5 a
+s3: m5 g
+s4: m5 c
+
+a: A
+u: U
+g: G
+c: C
+
+m1: A
+m1: U
+m1: G
+m1: C
+
+m2: m1 m1
+m3: m2 m1
+m4: m2 m2
+m5: m4 m1
+m6: m4 m2 
+m7: m4 m3
+m8: m4 m4
+m9: m4 m5
+m10: m4 m6
