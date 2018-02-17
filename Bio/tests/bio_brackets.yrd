@@ -1,32 +1,28 @@
-a_0_10 : s0 any*[0..10] s0
-a_4_5 : any*[4..5]
-s_1 : stem1<a_4_5>
+any_0_2 : any*[0..2]
+any_2 : any any
+any_5 : any_2 any_2 any
+a_0_7 : any_0_2 | any_0_2 any_2 | any_0_2 any_5
 
 [<Start>]
-s0: stem<s_1> | stem0<(a_0_10 | s0)>
+s1: s0 any
+
+s0: a_0_7 | a_0_7 stem<s0>
 
 any: A | U | C | G
-
-stem0<s>: 
-	  A s U 
-	| G s C 
-	| U s A 
-	| C s G
-	| s
 
 stem1<s>: 
 	  A s U 
 	| G s C 
 	| U s A 
 	| C s G
-
-stem2<s>: stem1<stem1<s>>
-
-mk_stem<s>: 
-      A mk_stem<s> U
-    | U mk_stem<s> A
-    | C mk_stem<s> G
-    | G mk_stem<s> C
-	| s
 	
-stem<s>: mk_stem<stem1<s>>
+stem2<s>: stem1<stem1<s>>
+stem4<s>: stem2<stem2<s>>
+
+stem<s>: 
+      A stem<s> U
+    | U stem<s> A
+    | C stem<s> G
+    | G stem<s> C
+	| stem4<s>
+	
