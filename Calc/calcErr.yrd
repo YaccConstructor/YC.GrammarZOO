@@ -1,0 +1,37 @@
+{
+open QuickGraph.FSA.FsaApproximation
+open QuickGraph.FSA.GraphBasedFsa
+}
+
+options {
+    translate = false
+}
+
+module Main
+
+binExpr<operand binOp>:
+operand (binOp operand)*
+
+[<Start>]
+prog: binExpr<(VAR EQ expr) SEMI>
+
+expr:
+ binExpr<term termOp>
+
+termOp:
+ PLUS | MINUS
+
+term:
+ binExpr<factor factorOp>
+
+factorOp:
+ MULT | DIV
+
+factor:
+ binExpr<powExpr powOp> 
+
+powOp:
+ POW
+
+powExpr:
+ NUMBER | VAR | LBRACE expr RBRACE
